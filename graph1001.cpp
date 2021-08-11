@@ -130,25 +130,77 @@ int hasallpath(vector<vector<edge>> &graph, int src,int des,string psf,vector<bo
 
 }
 
+// void preorder(vector<vector<edge>> &graph, int src , int wfs, string psf, vector<bool> vis)
+// {
+//     cout<<src<<"--->"<<psf + to_string(src) <<" @ " << wfs<<endl;
+
+//     vis[src] = true;
+//     for(edge e : graph[src])
+//     {
+//         if(!vis[e.v])
+//         {
+//             preorder(graph,e.v,wfs+ e.w,psf + to_string(src) , vis);
+//         }
+//     } 
+
+//     vis[src] = false;
+// }
+
+void preorder(vector<vector<edge>> &graph, int src , int wfs, string psf, vector<bool> vis)
+{  
+    cout<<src<<"---->"<<psf + to_string(src)<<" @ "<<wfs<<endl;
+    vis[src] = true;
+    for(edge e : graph[src])
+    {
+        if(!vis[e.v])
+        {
+            preorder(graph,e.v,wfs+ e.w,psf + to_string(src) , vis);
+        }
+    } 
+
+    vis[src] = false;
+}
+
+class pair_{
+  
+  int heavypath;
+  string psf = "";
+
+  pair_()
+  {
+      heavypath = -1;
+      psf = "";
+  }
+
+  pair_(int heavypath , string psf)
+  {
+      this->heavypath = heavypath;
+      this->psf = psf;
+  }
+
+};
+
+
+
 int main()
 {
     int v = 9;
 
     vector<vector<edge>> graph(v, vector<edge>());
 
-    addedge(graph, 0, 3, 10);
+    addedge(graph, 0, 3, 30);
     addedge(graph, 0, 1, 10);
     addedge(graph, 1, 2, 10);
-    addedge(graph, 2, 3, 40);
-    addedge(graph, 2, 7, 2);
-    addedge(graph, 8, 7, 3);
-    addedge(graph, 2, 8, 4);
-    addedge(graph, 3, 4, 2);
-    addedge(graph, 4, 5, 2);
-    addedge(graph, 4, 6, 8);
-    addedge(graph, 6, 5, 3);
+    addedge(graph, 2, 3, 20);
+    addedge(graph, 2, 7, 10);
+    addedge(graph, 8, 7, 20);
+    addedge(graph, 2, 8, 30);
+    addedge(graph, 3, 4, 40);
+    addedge(graph, 4, 5, 50);
+    addedge(graph, 4, 6, 70);
+    addedge(graph, 6, 5, 60);
 
-    // display(graph, v);
+    //  display(graph, v);
     // cout << "===========================" << endl;
     // //    removeedge(graph,2,3);
     //    removeedge(graph,0,3);
@@ -161,9 +213,11 @@ int main()
     // display(graph, v);
 
     vector<bool> vis(v,false);
-    // removeedge(graph,0,3);
-    removeedge(graph,0,1);
-    cout<<haspath(graph,0,6,vis)<<endl;
-    cout<<hasallpath(graph,0,6,"",vis)<<endl;
+    // // removeedge(graph,0,3);
+    // removeedge(graph,0,1);
+    // cout<<haspath(graph,0,6,vis)<<endl;
+    // cout<<hasallpath(graph,0,6,"",vis)<<endl;
+    preorder(graph,0,0,"",vis);
+
     return 0;
 }
