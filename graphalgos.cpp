@@ -88,7 +88,10 @@ void bfs_graph_withoutcycle(vector<vector<edge>> &graph, int src)
         level++;
         cout << endl;
     }
+    
 }
+
+
 void dfs(vector<vector<edge>> &graph, int src, int des, vector<bool> &vis)
 {
     if (src == des)
@@ -107,14 +110,15 @@ void dfs(vector<vector<edge>> &graph, int src, int des, vector<bool> &vis)
 
     vis[src] = false;
 }
+
 // 2* Dijikstra
 
 // Priority queue instead of queue
-// It is single source algo, gives the shortest path from source to parination
-// In it the sum from source to parination is minimum whereas in MST the sum of edges is minimum. So it's possible the overall sum of
-//edges in dijikstra is greater than MST but is ensured that to parination the path is shortest.
+// It is single source algo, gives the shortest path from source to destination
+// In it the sum from source to destination is minimum whereas in MST the sum of edges is minimum. So it's possible the overall sum of
+//edges in dijikstra is greater than MST but is ensured that to destination the path is shortest.
 
-// For dijikstra we need, (source,parination,wt,psf)
+// For dijikstra we need, (source,destination,wt,psf)
 
 class pair_
 {
@@ -276,6 +280,117 @@ void dijikstra_btr(vector<vector<edge>> &graph, int v, int src)
     display(mygraph);
 }
 
+// BELMON FORD ALGORITHM
+void display1(vector<vector<int>> &newgraph)
+{
+    for (int i = 0; i < newgraph.size(); i++)
+    {
+        for (int j = 0; j < newgraph[0].size(); j++)
+        {
+            cout << newgraph[i][j] << "  ";
+        }
+        cout << endl;
+    }
+}
+
+void belmon_ford(vector<vector<int>> &graph, int src, int dest, int v)
+{
+    vector<int> prev(v);
+    prev[src] = 0;
+    bool isnegativecycle = false;
+
+    for (int i = 1; i <= v; i++)
+    {
+        vector<int> curr = prev;
+        bool isanyupdate = false;
+        for (vector<int> e : graph)
+        {
+            int u = e[0];
+            int v = e[1];
+            int wt = e[2];
+            if (prev[u] + wt < curr[v])
+            {
+                curr[v] = prev[u] + wt;
+                isanyupdate = true;
+            }
+
+            if (i == v && isanyupdate)
+            {
+                isnegativecycle = true;
+            }
+            if (!isanyupdate)
+            {
+                break;
+            }
+        }
+
+        prev = curr;
+    }
+}
+// / //////////////////////////////////////////////////////////////////////////////////////////////////////////
+// KosaRaju Algo
+
+void dfs_01(int src, vector<vector<edge>> &graph, vector<int> &st, vector<bool> &vis)
+{
+    vis[src] = true;
+    for (edge e : graph[src])
+    {
+        if (!vis[e.v])
+        {
+            dfs_01(e.v, graph, st, vis);
+        }
+    }
+    st.push_back(src);
+}
+void dfs_02(vector<vector<edge>> &graph, int src, vector<bool> vis)
+{
+    vis[src] = true;
+    for (edge e : graph[src])
+    {
+        if (!vis[e.v])
+        {
+            dfs_02(graph, e.v, vis);
+        }
+    }
+}
+
+void KosaRajus_Algo(vector<vector<edge>> &graph, int n)
+{
+    vector<bool> vis(n, false);
+    vector<int> st;
+    for (int i = 0; i < n; i++)
+    {
+        if (!vis[i])
+        {
+            dfs_01(i, graph, st, vis);
+        }
+    }
+
+    vis.clear();
+    vis.resize(n, false);
+
+    // Inverse of graph
+    vector<vector<edge>> newgraph(n, std::vector<edge>());
+    for (int i = 0; i < graph.size(); i++)
+    {
+        for (edge e : graph[i])
+        {
+            newgraph[e.v].push_back(edge(i, e.w));
+        }
+    }
+    int count = 0;
+    for (int i = st.size() - 1; i >= 0; i--)
+    {
+        if (!vis[st[i]])
+        {
+            dfs_02(newgraph, st[i], vis);
+            count++;
+        }
+    }
+
+    cout << count << endl;
+}
+
 int main()
 {
     int n = 9;
@@ -294,6 +409,5 @@ int main()
     addedge(graph, 3, 4, 9);
     addedge(graph, 2, 3, 7);
     addedge(graph, 2, 8, 2);
-    dijikstra_btr(graph, 0, n);
-    
+    // belmon_ford(graph, 0, 7, n);
 }
